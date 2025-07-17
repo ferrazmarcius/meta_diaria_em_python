@@ -7,3 +7,9 @@ class RelatorioGanhos(BaseModel):
     total_ganhos_periodo: float
     quantidade_registros: int
     media_por_ganho: float
+
+class FluxoMensal(BaseModel):
+    mes: str # Formato AAAA-MM
+    total_dividas: float
+    total_ganhos: float
+    

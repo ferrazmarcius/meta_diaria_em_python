@@ -7,19 +7,22 @@ body {
     display: flex;
     justify-content: center;
 }
+
 .container {
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     background: white;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
+
 h1, h2, h3 {
     color: #2c3e50;
     border-bottom: 2px solid #ecf0f1;
     padding-bottom: 10px;
 }
+
 input, select, button {
     width: 100%;
     padding: 12px;
@@ -29,70 +32,133 @@ input, select, button {
     box-sizing: border-box;
     font-size: 1rem;
 }
+
 button {
     border: none;
     background-color: #3498db;
     color: white;
     cursor: pointer;
     font-weight: bold;
+    width: auto;
+    margin-bottom: 0;
+    transition: background-color 0.2s ease-in-out;
 }
-button:hover { background-color: #2980b9; }
-.btn-danger { background-color: #e74c3c; }
-.btn-danger:hover { background-color: #c0392b; }
-.progress-bar-container {
-    width: 100%;
-    background-color: #ecf0f1;
-    border-radius: 5px;
-    margin: 1rem 0;
+
+button:hover { 
+    background-color: #2980b9; 
 }
-.progress-bar {
-    width: 0%;
-    height: 24px;
-    background-color: #2ecc71;
-    border-radius: 5px;
-    text-align: center;
-    line-height: 24px;
-    color: white;
-    font-weight: bold;
-    transition: width 0.5s ease-in-out;
+
+.btn-danger { 
+    background-color: #e74c3c; 
 }
-.info { font-size: 1.2rem; margin: 0.5rem 0; }
-#dashboard-view { display: none; }
-.error-message { color: #e74c3c; margin-bottom: 1rem; }
-.header-info, .meta-controls {
+
+.btn-danger:hover { 
+    background-color: #c0392b; 
+}
+
+.btn-success { 
+    background-color: #2ecc71; 
+}
+
+.btn-success:hover { 
+    background-color: #27ae60; 
+}
+
+#dashboard-view { 
+    display: none; 
+}
+
+.error-message { 
+    color: #e74c3c; 
+    margin-bottom: 1rem; 
+    min-height: 1.2em;
+}
+
+.header-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
 }
-#lista-ganhos {
-    list-style: none;
-    padding: 0;
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #ecf0f1;
-    border-radius: 4px;
+
+.toolbar {
+    padding: 1rem 0;
 }
-#lista-ganhos li {
-    padding: 10px;
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    text-align: left;
+    padding: 12px;
     border-bottom: 1px solid #ecf0f1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    vertical-align: middle;
 }
-#lista-ganhos li:last-child {
-    border-bottom: none;
-}
-.delete-ganho-btn {
-    background: none;
-    border: none;
-    color: #e74c3c;
+
+th {
+    background-color: #f8f9fa;
     font-weight: bold;
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 0 5px;
+    color: #34495e;
 }
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td.actions {
+    display: flex;
+    gap: 0.25em; 
+}
+
+td.actions button {
+    font-size: 1rem;
+    width: 1.875em;
+    height: 1.875em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.25em;
+    /* IMPORTANTE: Anula a regra geral que estava atrapalhando */
+    width: 30px; 
+    height: 30px;
+}
+
+td.actions button svg {
+    width: 1em;
+    height: 1em;
+    stroke: white;
+    stroke-width: 2;
+}
+
+.progress-bar-container {
+    width: 100%;
+    min-width: 100px;
+    background-color: #ecf0f1;
+    border-radius: 5px;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 20px;
+    background-color: #2ecc71;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+    font-size: 0.8em;
+    font-weight: bold;
+    transition: width 0.5s ease-in-out;
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -105,6 +171,7 @@ button:hover { background-color: #2980b9; }
     align-items: center;
     z-index: 1000;
 }
+
 .modal-content {
     background: white;
     padding: 2rem;
@@ -112,8 +179,98 @@ button:hover { background-color: #2980b9; }
     width: 90%;
     max-width: 500px;
 }
+
 .modal-actions {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
+}
+
+.chart-container {
+    position: relative; 
+    height: 400px;     
+    width: 100%;
+}
+
+.chart-container {
+    margin-top: 2rem; 
+}
+
+.chart-container h2 {
+    margin-bottom: 1.5rem; 
+    font-size: 1.2rem; 
+    border-bottom: none; 
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    padding: 4px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.btn-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: #34495e;
+    stroke-width: 2;
+}
+
+.btn-icon:hover svg {
+    stroke: #3498db;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.chart-header h2 {
+    margin: 0;
+    border: none;
+    font-size: 1.2rem;
+}
+
+.chart-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* --- NOVAS REGRAS PARA OS BOTÕES DE NAVEGAÇÃO --- */
+.chart-nav .btn-icon {
+    background-color: #3498db; /* Cor de fundo azul padrão */
+    border-radius: 4px;
+    opacity: 1; /* Garante que não esteja transparente */
+    visibility: visible; /* Garante que esteja visível */
+    width: 32px;
+    height: 32px;
+}
+
+.chart-nav .btn-icon:hover {
+    background-color: #2980b9; /* Efeito hover */
+}
+
+.chart-nav .btn-icon:disabled {
+    background-color: #bdc3c7; /* Cor para quando o botão estiver desabilitado */
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.chart-nav .btn-icon svg {
+    stroke: white; /* Cor do ícone (setas) */
+}
+
+#current-month-label {
+    font-weight: bold;
+    color: #34495e;
+    min-width: 80px; 
+    text-align: center;
 }

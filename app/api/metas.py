@@ -44,6 +44,63 @@ async def listar_metas_do_usuario(usuario_atual = Depends(get_usuario_atual)):
         return resposta.data
     except APIError as e:
         raise HTTPException(status_code=400, detail=f"Erro no banco de dados: {e.message}")
+    
+@router.get("/resumos/", response_model=List[ResumoMeta])
+async def listar_resumos_das_metas(usuario_atual = Depends(get_usuario_atual)):
+    """
+    Retorna uma lista com o resumo calculado de TODAS as metas do usuário.
+    Otimizado para evitar múltiplas chamadas ao banco de dados.
+    """
+    user_id = str(usuario_atual.id)
+
+    # 1. Busca todas as metas do usuário de uma vez
+    metas_resp = supabase.table('metas').select("*").eq('usuario_id', user_id).execute()
+    if not metas_resp.data:
+        return [] # Retorna uma lista vazia se não houver metas
+
+    metas_do_usuario = metas_resp.data
+    lista_de_ids_metas = [meta['id'] for meta in metas_do_usuario]
+
+    # 2. Busca todos os ganhos relacionados a todas essas metas de uma vez
+    ganhos_resp = supabase.table('ganhos') \
+        .select("meta_id, valor_ganho") \
+        .in_('meta_id', lista_de_ids_metas) \
+        .execute()
+    
+    # 3. Organiza os ganhos em um dicionário para acesso rápido (muito mais eficiente)
+    ganhos_por_meta = {}
+    for ganho in ganhos_resp.data:
+        meta_id = ganho['meta_id']
+        if meta_id not in ganhos_por_meta:
+            ganhos_por_meta[meta_id] = []
+        ganhos_por_meta[meta_id].append(ganho['valor_ganho'])
+
+    # 4. Monta a lista de resumos calculados
+    lista_de_resumos = []
+    for meta in metas_do_usuario:
+        meta_id = meta['id']
+        ganhos_da_meta = ganhos_por_meta.get(meta_id, []) # Pega a lista de ganhos ou uma lista vazia
+
+        total_arrecadado = sum(ganhos_da_meta)
+        valor_meta = meta['valor_meta']
+        valor_faltante = max(0, valor_meta - total_arrecadado)
+        
+        if valor_meta > 0:
+            progresso = min(100.0, (total_arrecadado / valor_meta) * 100)
+        else:
+            progresso = 100.0 if total_arrecadado > 0 else 0.0
+
+        resumo = ResumoMeta(
+            meta_id=meta_id,
+            nome_meta=meta['nome_meta'],
+            valor_meta=valor_meta,
+            total_arrecadado=total_arrecadado,
+            valor_faltante=valor_faltante,
+            progresso=round(progresso, 2)
+        )
+        lista_de_resumos.append(resumo)
+
+    return lista_de_resumos
 
 # --- MUDANÇA 2: Novo endpoint para buscar uma meta específica ---
 @router.get("/{meta_id}", response_model=Meta)

@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, Query, HTTPException, status
+from fastapi import APIRouter, Depends, Query, HTTPException, status 
+from typing import List
+from collections import defaultdict
 from datetime import date, timedelta, datetime
 from app.core.dependencies import get_usuario_atual
 from app.core.config import supabase
-from app.schemas.relatorio import RelatorioGanhos
+from app.schemas.relatorio import RelatorioGanhos, FluxoMensal
 
 router = APIRouter()
 
@@ -63,3 +65,52 @@ async def gerar_relatorio_de_ganhos(
         quantidade_registros=quantidade,
         media_por_ganho=round(media, 2)
     )
+
+@router.get("/fluxo-mensal", response_model=List[FluxoMensal])
+async def gerar_relatorio_fluxo_mensal(usuario_atual = Depends(get_usuario_atual)):
+    """
+    Gera um relatório do fluxo mensal de novas dívidas (baseado no prazo da meta)
+    versus ganhos registrados (baseado na data do ganho).
+    """
+    user_id = str(usuario_atual.id)
+
+    # 1. Buscar todas as metas, garantindo que pegamos a data_prazo
+    metas_resp = supabase.table('metas').select("id, valor_meta, criado_em, data_prazo").eq('usuario_id', user_id).execute()
+    
+    if not metas_resp.data:
+        return []
+
+    lista_metas = metas_resp.data
+    ids_das_metas = [meta['id'] for meta in lista_metas]
+    
+    lista_ganhos = []
+    if ids_das_metas:
+        ganhos_resp = supabase.table('ganhos').select("valor_ganho, criado_em").in_('meta_id', ids_das_metas).execute()
+        lista_ganhos = ganhos_resp.data
+
+    fluxo_por_mes = defaultdict(lambda: {"dividas": 0.0, "ganhos": 0.0})
+
+    # --- LÓGICA CORRIGIDA AQUI ---
+    for meta in lista_metas:
+        # Prioriza a data_prazo. Se não existir, usa a criado_em.
+        data_de_referencia = meta.get('data_prazo') or meta['criado_em']
+        mes = data_de_referencia[:7] # Pega 'AAAA-MM'
+        fluxo_por_mes[mes]['dividas'] += meta['valor_meta']
+
+    for ganho in lista_ganhos:
+        # Ganhos continuam sendo agrupados por quando foram criados
+        mes = ganho['criado_em'][:7]
+        fluxo_por_mes[mes]['ganhos'] += ganho['valor_ganho']
+
+    relatorio_final = []
+    for mes in sorted(fluxo_por_mes.keys()):
+        dados_mes = fluxo_por_mes[mes]
+        relatorio_final.append(
+            FluxoMensal(
+                mes=mes,
+                total_dividas=dados_mes['dividas'],
+                total_ganhos=dados_mes['ganhos']
+            )
+        )
+
+    return relatorio_final
