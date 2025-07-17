@@ -26,20 +26,16 @@
                     Não tem uma conta? <a href="#" id="show-register-link">Cadastre-se</a>
                 </p>
             </div>
-
             <div id="register-view" style="display: none;">
                 <h1>Meta Diária - Cadastro</h1>
                 <form id="register-form">
                     <p id="register-error" class="error-message"></p>
                     <label for="register-name">Nome</label>
                     <input type="text" id="register-name" placeholder="Seu nome completo" required>
-                    
                     <label for="register-email">E-mail</label>
                     <input type="email" id="register-email" placeholder="Seu melhor e-mail" required>
-                    
                     <label for="register-password">Senha</label>
                     <input type="password" id="register-password" placeholder="Mínimo 6 caracteres" required>
-                    
                     <button type="submit">Criar Conta</button>
                 </form>
                 <p style="text-align: center; margin-top: 1rem;">
@@ -48,24 +44,21 @@
             </div>
         </div>
 
-        <div id="dashboard-view">
+        <div id="dashboard-view" style="display: none;">
             <div class="header-info">
                 <h1>Minhas Metas</h1>
                 <p id="info-usuario"></p>
                 <button id="edit-name-button" class="btn-icon" title="Editar nome"></button>
                 <button id="logout-button" class="btn-danger">Sair</button>
             </div>
-            
             <div class="toolbar">
                 <button id="create-meta-button" class="btn-success">Criar Nova Meta</button>
             </div>
-
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Nome da Meta</th>
-                            <th>Valor Total (R$)</th>
                             <th>Progresso</th>
                             <th>Ações</th>
                         </tr>
@@ -73,13 +66,11 @@
                     <tbody id="metas-table-body"></tbody>
                 </table>
             </div>
-
              <div id="no-meta-view" style="display: none; text-align: center; margin-top: 2rem;">
                 <h2>Nenhuma meta encontrada.</h2>
                 <p>Clique no botão "Criar Nova Meta" para começar!</p>
             </div>
-
-            <div class="chart-container">
+            <div class="chart-container" style="display: none;">
                 <div class="chart-header">
                     <h2>Fluxo Mensal</h2>
                     <div class="chart-nav">
@@ -91,6 +82,33 @@
                 <canvas id="fluxoMensalChart"></canvas>
             </div>
         </div>
+        
+        <div id="detail-view" style="display: none;">
+            <div class="header-info">
+                <h1 id="detail-title">Detalhes da Meta</h1>
+                <button id="back-to-table-btn">&larr; Voltar para Todas as Metas</button>
+            </div>
+            <div id="detail-dashboard-content">
+                <p class="info">Meta: <span id="detail-valor-meta"></span></p>
+                <h3>Progresso</h3>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="detail-progresso-barra">0%</div>
+                </div>
+                <p class="info">Total Arrecadado: <span id="detail-total-arrecadado"></span></p>
+                <p class="info">Faltam: <span id="detail-valor-faltante"></span></p>
+                
+                <h2 style="margin-top: 2rem;">Registrar Novo Ganho</h2>
+                <form id="detail-ganho-form">
+                    <p id="detail-ganho-error" class="error-message"></p>
+                    <input type="number" id="detail-valor-ganho" placeholder="Ex: 150.50" step="0.01" required>
+                    <input type="text" id="detail-fonte-ganho" placeholder="Fonte (opcional): Ex: Uber, Freelance">
+                    <button type="submit" class="btn-success">Adicionar Ganho</button>
+                </form>
+
+                <h3 style="margin-top: 2rem;">Histórico de Ganhos</h3>
+                <ul id="detail-lista-ganhos"></ul>
+            </div>
+        </div>
     </div>
 
     <div id="create-modal" class="modal-overlay">
@@ -99,13 +117,10 @@
             <form id="create-meta-form">
                 <label for="create-nome-meta">Nome da Meta</label>
                 <input type="text" id="create-nome-meta" placeholder="Ex: Quitar Dívida do Carro" required>
-                
                 <label for="create-valor-meta">Valor da Meta (R$)</label>
                 <input type="number" id="create-valor-meta" step="0.01" placeholder="Ex: 5000.00" required>
-
                 <label for="create-data-prazo">Data Prazo (Opcional)</label>
                 <input type="date" id="create-data-prazo">
-                
                 <div class="modal-actions">
                     <button type="submit" class="btn-success">Criar Meta</button>
                     <button type="button" id="cancel-create-button" class="btn-danger">Cancelar</button>
@@ -121,13 +136,10 @@
                 <input type="hidden" id="edit-meta-id">
                 <label for="edit-nome-meta">Nome da Meta</label>
                 <input type="text" id="edit-nome-meta" required>
-                
                 <label for="edit-valor-meta">Valor da Meta</label>
                 <input type="number" id="edit-valor-meta" step="0.01" required>
-
                 <label for="edit-data-prazo">Data Prazo</label>
                 <input type="date" id="edit-data-prazo">
-                
                 <div class="modal-actions">
                     <button type="submit">Salvar Alterações</button>
                     <button type="button" id="cancel-edit-button" class="btn-danger">Cancelar</button>
